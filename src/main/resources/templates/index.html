@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Validação de CPF</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+        input, button {
+            margin: 10px;
+            padding: 8px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Digite seu CPF</h2>
+    <form action="/validar" method="post">
+        <input type="text" name="cpf" placeholder="Digite o CPF" required>
+        <button type="submit">Validar</button>
+    </form>
+    <p th:text="${mensagem}" style="color: red;"></p>
+</body>
+</html>
