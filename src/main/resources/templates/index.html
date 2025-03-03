@@ -2,29 +2,152 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Validação de CPF</title>
     <style>
         body {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             flex-direction: column;
+            align-items: center;
             font-family: Arial, sans-serif;
+            text-align: center;
+            height: 100vh;
         }
+
+        h2 {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 50px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; /* Alinha os inputs à esquerda */
+            gap: 30px;
+        }
+
+        .form-box {
+            text-align: left;
+            margin-bottom:200px;
+        }
+
         input, button {
-            margin: 10px;
+            display: block;
+            width: 250px;
+            margin-top: 5px;
             padding: 8px;
             font-size: 16px;
+        }
+
+        .images-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 100px;
+        }
+
+        .images-box img {
+            width: 1200px;
+            height: 300px;
+        }
+
+        p {
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <h2>Digite seu CPF</h2>
-    <form action="/validar" method="post">
-        <input type="text" name="cpf" placeholder="Digite o CPF" required>
-        <button type="submit">Validar</button>
-    </form>
-    <p th:text="${mensagem}" style="color: red;"></p>
+
+    <h2>Validação de CPF e RG</h2>
+
+    <div class="container">
+        <!-- Inputs à esquerda -->
+        <div class="form-section">
+            <div class="form-box">
+                <h3>Digite seu CPF</h3>
+                <form id="cpfForm" onsubmit="validateCpf(event)">
+                    <input type="text" id="cpfInput" name="cpf" placeholder="Digite o CPF" required>
+                    <button type="submit">Validar CPF</button>
+                </form>
+                <p id="cpfMessage"></p>
+            </div>
+            
+            <div class="form-box">
+                <h3>Digite seu RG</h3>
+                <form id="rgForm" onsubmit="validateRg(event)">
+                    <input type="text" id="rgInput" name="rg" placeholder="Digite o RG" required>
+                    <button type="submit">Validar RG</button>
+                </form>
+                <p id="rgMessage"></p>
+            </div>
+        </div>
+
+        <!-- Imagens à direita -->
+        <div class="images-box">
+            <img th:src="@{/images/CPF_automato.png}" alt="Ícone CPF">
+            <img th:src="@{/images/RG_automato.png}" alt="Ícone RG">
+        </div>
+    </div>
+    <script>
+        function validateCpf(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            let cpf = document.getElementById("cpfInput").value;
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", "/validateCpf", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    let response = JSON.parse(xhr.responseText || '{}');
+                    let cpfMessage = document.getElementById("cpfMessage");
+                    if (xhr.status === 200) {
+                        cpfMessage.innerText = response.message;
+                        cpfMessage.style.color = "green";
+                    } else if (xhr.status === 400) {
+                        cpfMessage.innerText = response.message;
+                        cpfMessage.style.color = "red";
+                    }
+                }
+            };
+
+            xhr.send("cpf=" + encodeURIComponent(cpf));
+        }
+
+        function validateRg(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            let rg = document.getElementById("rgInput").value;
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", "/validateRg", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    let response = JSON.parse(xhr.responseText || '{}');
+                    let rgMessage = document.getElementById("rgMessage");
+                    if (xhr.status === 200) {
+                        rgMessage.innerText = response.message;
+                        rgMessage.style.color = "green";
+                    } else if (xhr.status === 400) {
+                        rgMessage.innerText = response.message;
+                        rgMessage.style.color = "red";
+                    }
+                }
+            };
+
+            xhr.send("rg=" + encodeURIComponent(rg));
+        }
+    </script>
 </body>
 </html>
